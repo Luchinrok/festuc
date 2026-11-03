@@ -2190,16 +2190,13 @@ function _confirmLotEdit(product, lot, v) {
   _evaluateLowStock(realProduct, prevBase);
 }
 
-// ⚠️ NO MIGRAT a la pila del gest enrere (sub-pas 2), a diferència dels altres
-// 4 modals d'aquest fitxer. Motiu: el botó d'emoji el tanca i obre la PANTALLA
-// del picker d'emojis (openEmojiPicker), i en tornar es reconstrueix el modal
-// des de _editProductModalState amb un listener propi al botó enrere
-// (_editProductModalBackListener). És un modal↔pantalla d'anada i tornada amb
-// estat, no una capa simple: amb onSettled la pantalla del picker no empenyaria
-// entrada (reutilitzaria la de sota del modal) i el retorn quedaria una capa
-// massa amunt — pitjor que la premuda morta, perquè trauria l'usuari de l'app
-// abans d'hora. Cal decidir primer com es modela el round-trip. Mentrestant,
-// com que no toca ni la pila ni l'historial, es comporta igual que al sub-pas 1.
+// Migrat a la pila del gest enrere. El botó d'emoji fa una anada i tornada a la
+// PANTALLA del picker d'emojis, amb l'estat del formulari a _editProductModalState:
+//   · anada: dismissModal(.., {push:true}) → el modal treu la seva entrada i el
+//     picker n'empeny una de nova: [producte][picker].
+//   · tornada (emoji triat, fletxa o gest; tots acaben en history.back()): el
+//     popstate torna al producte i crida reopenProductEditAfterEmojiPicker, que
+//     reobre el modal amb l'estat: [producte][modal]. Cap entrada de més.
 function openProductEditModal(product, restoreState) {
   if (!product) return;
   const overlay = document.createElement('div');
@@ -2253,10 +2250,14 @@ function openProductEditModal(product, restoreState) {
     + '<button class="modal-confirm" id="product-edit-confirm">' + escapeHtml(t('lotSaveChanges')) + '</button>'
     + '</div></div>';
 
-  document.body.appendChild(overlay);
+  // Neteja REAL (també quan el tanca el gest): destrueix el picker de categoria.
+  let destroyCatPicker = function () {};
+  openModal(overlay, () => {
+    destroyCatPicker();
+    if (overlay.parentNode) document.body.removeChild(overlay);
+  });
 
   // Picker categoria (helper genèric)
-  let destroyCatPicker = function () {};
   if (catOptions.length > 0) {
     destroyCatPicker = _buildPickerDropdown(
       'product-edit-category-picker-btn',
@@ -2276,16 +2277,16 @@ function openProductEditModal(product, restoreState) {
       emoji: currentEmojiSelected,
       categoryId: catBtn ? (catBtn.dataset.value || initialCatId) : initialCatId
     };
-    destroyCatPicker();
-    document.body.removeChild(overlay);
-    if (typeof openEmojiPicker === 'function') {
-      openEmojiPicker('product-edit-emoji', 'product');
-    }
+    // La pantalla del picker és una capa NOVA sobre el producte → push.
+    dismissModal(overlay, () => {
+      if (typeof openEmojiPicker === 'function') {
+        openEmojiPicker('product-edit-emoji', 'product');
+      }
+    }, { push: true });
   });
 
   overlay.querySelector('#product-edit-cancel').addEventListener('click', () => {
-    destroyCatPicker();
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
   });
   overlay.querySelector('#product-edit-confirm').addEventListener('click', () => {
     const catBtn = overlay.querySelector('#product-edit-category-picker-btn');
@@ -2298,16 +2299,23 @@ function openProductEditModal(product, restoreState) {
       showToast(t('toastNameRequired'));
       return;
     }
-    destroyCatPicker();
-    document.body.removeChild(overlay);
-    _confirmProductEdit(product, values);
+    // _confirmProductEdit fa openProduct (navega) → onSettled.
+    dismissModal(overlay, () => _confirmProductEdit(product, values));
   });
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) {
-      destroyCatPicker();
-      document.body.removeChild(overlay);
-    }
+    if (e.target === overlay) dismissModal(overlay);
   });
+}
+
+// Cridada pel popstate (app.js) en tornar de la pantalla del picker d'emojis.
+// Si s'hi havia anat des del modal d'editar producte, el reobre amb l'estat
+// (i l'emoji nou, si se n'ha triat un). Si no, no fa res.
+function reopenProductEditAfterEmojiPicker() {
+  if (emojiPickerTarget !== 'product-edit-emoji' || !_editProductModalState) return;
+  const state = _editProductModalState;
+  _editProductModalState = null;
+  const product = products.find(p => p.id === state.productId);
+  if (product) openProductEditModal(product, state);
 }
 
 function _confirmProductEdit(product, v) {
@@ -5270,21 +5278,11 @@ function _emojiPickerApply(target, e) {
       if (typeof renderRecipeEditIngredients === 'function') renderRecipeEditIngredients();
     }
   } else if (target === 'product-edit-emoji') {
-    // FASE D polish: l'usuari ha aplicat un emoji. Neteja el back
-    // listener (ja no cal el fallback de cancel·lació) i re-obre
-    // el modal amb l'estat preservat + el nou emoji.
-    const backBtn = document.getElementById('emoji-picker-back-btn');
-    if (backBtn && _editProductModalBackListener) {
-      backBtn.removeEventListener('click', _editProductModalBackListener);
-      _editProductModalBackListener = null;
-    }
-    if (_editProductModalState) {
-      const state = _editProductModalState;
-      state.emoji = e;
-      _editProductModalState = null;
-      const product = products.find(p => p.id === state.productId);
-      if (product) openProductEditModal(product, state);
-    }
+    // Només desa l'emoji a l'estat. El modal el reobre el popstate quan el
+    // history.back() de _makeEmojiBtn aterri al producte
+    // (reopenProductEditAfterEmojiPicker): obrir-lo aquí empenyeria entrada
+    // amb la traversal pendent.
+    if (_editProductModalState) _editProductModalState.emoji = e;
   } else {
     selectedEmoji = e;
     renderEmojiPicker();
@@ -5361,8 +5359,7 @@ function _makeEmojiBtn(e, currentEmoji, target) {
     // Retorn a l'origen via history.back() (l'obertura de l'emoji-picker va
     // empènyer una entrada) → popstate navega a l'origen, sense deixar una
     // entrada "morta". No toquem la URL. (El cas 'product-edit-emoji' reobre el
-    // modal d'edició dins _emojiPickerApply; queda per sobre — el tancament del
-    // modal amb el gest arriba al sub-pas 2.)
+    // modal d'edició en aterrar: reopenProductEditAfterEmojiPicker.)
     history.back();
   });
   return btn;
@@ -5374,10 +5371,8 @@ function _makeEmojiBtn(e, currentEmoji, target) {
 
 // State temporal per a restaurar el modal d'editar producte quan
 // l'usuari torna del picker complet d'emojis (sigui aplicant o
-// cancel·lant). _editProductModalBackListener captura el cas
-// cancel·lació (back-btn del picker sense tria d'emoji).
+// cancel·lant). El reobre reopenProductEditAfterEmojiPicker des del popstate.
 let _editProductModalState = null;
-let _editProductModalBackListener = null;
 
 // Helper genèric: lliga un picker dropdown (botó + opcions ocultes
 // amb scroll). Reusa el patró .category-picker-* ja existent
@@ -5490,31 +5485,9 @@ function openEmojiPicker(target, origin) {
   const backBtn = document.getElementById('emoji-picker-back-btn');
   if (backBtn) backBtn.dataset.back = origin;
 
-  // FASE D polish: si hi havia un listener pendent d'una sessió
-  // anterior del modal d'editar producte, netejar-lo abans
-  // d'instal·lar-ne un de nou (o cap, si el target ja no és el
-  // de l'edit producte).
-  if (backBtn && _editProductModalBackListener) {
-    backBtn.removeEventListener('click', _editProductModalBackListener);
-    _editProductModalBackListener = null;
-  }
-  if (backBtn && target === 'product-edit-emoji') {
-    _editProductModalBackListener = function () {
-      // L'usuari ha cancel·lat la tria. Re-obre el modal amb l'estat
-      // original. El handler genèric del back-btn ja ha fet
-      // showScreen('product') abans (ordre d'addEventListener).
-      const listener = _editProductModalBackListener;
-      _editProductModalBackListener = null;
-      if (listener && backBtn) backBtn.removeEventListener('click', listener);
-      if (_editProductModalState) {
-        const state = _editProductModalState;
-        _editProductModalState = null;
-        const product = products.find(p => p.id === state.productId);
-        if (product) setTimeout(() => openProductEditModal(product, state), 0);
-      }
-    };
-    backBtn.addEventListener('click', _editProductModalBackListener);
-  }
+  // Un estat d'editar producte que hagi quedat penjat no ha de reobrir el
+  // modal en tornar d'un picker obert per a una altra cosa.
+  if (target !== 'product-edit-emoji') _editProductModalState = null;
 
   const search = document.getElementById('emoji-search');
   if (search) {

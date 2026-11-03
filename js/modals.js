@@ -102,7 +102,7 @@ function showConsumptionSliderModal(product, action, onConfirm, alreadyConsumed)
       </div>
     </div>
   `;
-  document.body.appendChild(overlay);
+  openModal(overlay);
 
   const slider = overlay.querySelector('#consumption-slider');
   const display = overlay.querySelector('#consumption-percent');
@@ -189,7 +189,7 @@ function showConsumptionSliderModal(product, action, onConfirm, alreadyConsumed)
   }
 
   overlay.querySelector('#modal-no-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
   });
 
   overlay.querySelector('#modal-yes-btn').addEventListener('click', () => {
@@ -201,12 +201,12 @@ function showConsumptionSliderModal(product, action, onConfirm, alreadyConsumed)
       chosenPercent = currentPercent;
     }
     const absolutePercent = Math.round(chosenPercent * remaining / 100);
-    document.body.removeChild(overlay);
-    onConfirm(absolutePercent, chosenPercent);
+    // onConfirm navega (finalizeConsumption → navigateAfterAction) → onSettled.
+    dismissModal(overlay, () => onConfirm(absolutePercent, chosenPercent));
   });
 
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) document.body.removeChild(overlay);
+    if (e.target === overlay) dismissModal(overlay);
   });
 }
 

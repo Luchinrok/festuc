@@ -508,8 +508,8 @@
           '<button class="modal-confirm" id="rp-range-apply">' + escapeHtml(t('rpRangeApply')) + '</button>' +
         '</div>' +
       '</div>';
-    document.body.appendChild(overlay);
-    const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+    openModal(overlay);
+    const close = () => dismissModal(overlay);
     overlay.querySelector('#rp-range-cancel').addEventListener('click', close);
     overlay.querySelector('#rp-range-apply').addEventListener('click', () => {
       const from = overlay.querySelector('#rp-range-from').value;
@@ -550,12 +550,12 @@
           '<button class="modal-confirm modal-confirm-danger" id="rp-discard-confirm">' + escapeHtml(t('rpDiscardLeave')) + '</button>' +
         '</div>' +
       '</div>';
-    document.body.appendChild(overlay);
-    const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+    openModal(overlay);
+    const close = () => dismissModal(overlay);
     overlay.querySelector('#rp-discard-cancel').addEventListener('click', close);
+    // onConfirm NAVEGA (showScreen('home') o re-clic de la fletxa) → onSettled.
     overlay.querySelector('#rp-discard-confirm').addEventListener('click', () => {
-      close();
-      if (typeof onConfirm === 'function') onConfirm();
+      dismissModal(overlay, () => { if (typeof onConfirm === 'function') onConfirm(); });
     });
     overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   }

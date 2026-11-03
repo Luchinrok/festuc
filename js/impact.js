@@ -398,8 +398,8 @@ function showImpactInfoModal(kind) {
       </div>
     </div>
   `;
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#info-modal-close').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
 }

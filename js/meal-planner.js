@@ -367,9 +367,9 @@ function openRecipeSelector(day, slot) {
     + '<div class="mp-recipe-list" id="mp-recipe-list">' + listHtml + '</div>'
     + '<button class="secondary-btn" id="mp-recipe-cancel">' + (typeof t === 'function' ? t('cancel') : 'Cancel·la') + '</button>'
     + '</div>';
-  document.body.appendChild(overlay);
+  openModal(overlay);
 
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  const close = () => dismissModal(overlay);
 
   const searchInput = overlay.querySelector('#mp-recipe-search');
   if (searchInput) {

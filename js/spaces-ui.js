@@ -190,10 +190,10 @@ function _showRenameSpaceModal(spaceId) {
         '<button class="modal-confirm" id="space-rename-save">' + escapeHtml(t('spacesRenameSave')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
+  openModal(overlay);
   const input = overlay.querySelector('#space-rename-input');
   setTimeout(() => { input && input.focus(); input && input.select(); }, 50);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#space-rename-cancel').addEventListener('click', close);
   const save = () => {
     const v = (input.value || '').trim();
@@ -338,8 +338,8 @@ function _showMoveProductModal(product) {
         '<button class="modal-cancel" id="move-product-cancel">' + escapeHtml(t('cancel')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#move-product-cancel').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   overlay.querySelectorAll('.space-option').forEach(btn => {
@@ -347,8 +347,8 @@ function _showMoveProductModal(product) {
       const id = btn.dataset.spaceId;
       const target = targets.find(s => s.id === id);
       if (!target) return;
-      close();
-      _executeMoveProduct(product, target);
+      // Acaba navegant (navigateAfterAction) → onSettled.
+      dismissModal(overlay, () => _executeMoveProduct(product, target));
     });
   });
 }
@@ -462,8 +462,8 @@ function _showMoveMultipleProductsModal(items) {
         '<button class="modal-cancel" id="move-multi-cancel">' + escapeHtml(t('cancel')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#move-multi-cancel').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   overlay.querySelectorAll('.space-option').forEach(btn => {
@@ -471,8 +471,7 @@ function _showMoveMultipleProductsModal(items) {
       const id = btn.dataset.spaceId;
       const target = targets.find(s => s.id === id);
       if (!target) return;
-      close();
-      _executeMoveMultipleProducts(items, target);
+      dismissModal(overlay, () => _executeMoveMultipleProducts(items, target));
     });
   });
 }
@@ -520,8 +519,8 @@ function _showMoveMultipleShoppingItemsModal(items) {
         '<button class="modal-cancel" id="move-shop-multi-cancel">' + escapeHtml(t('cancel')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#move-shop-multi-cancel').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   overlay.querySelectorAll('.space-option').forEach(btn => {
@@ -529,8 +528,7 @@ function _showMoveMultipleShoppingItemsModal(items) {
       const id = btn.dataset.spaceId;
       const target = targets.find(s => s.id === id);
       if (!target) return;
-      close();
-      _executeMoveMultipleShoppingItems(items, target);
+      dismissModal(overlay, () => _executeMoveMultipleShoppingItems(items, target));
     });
   });
 }
@@ -677,8 +675,8 @@ function _showMoveShoppingItemModal(item) {
         '<button class="modal-cancel" id="move-shopping-cancel">' + escapeHtml(t('cancel')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#move-shopping-cancel').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   overlay.querySelectorAll('.space-option').forEach(btn => {
@@ -686,8 +684,8 @@ function _showMoveShoppingItemModal(item) {
       const id = btn.dataset.spaceId;
       const target = targets.find(s => s.id === id);
       if (!target) return;
-      close();
-      _executeMoveShoppingItem(item, target);
+      // Acaba navegant (openSupermarket) → onSettled.
+      dismissModal(overlay, () => _executeMoveShoppingItem(item, target));
     });
   });
 }
@@ -782,13 +780,13 @@ function _confirmSwitchToSpace(spaceId) {
         '<button class="modal-confirm" id="space-switch-confirm">' + escapeHtml(t('spacesSwitchConfirm', target.icon || '', target.name || '')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#space-switch-cancel').addEventListener('click', close);
   overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
   overlay.querySelector('#space-switch-confirm').addEventListener('click', () => {
-    close();
-    _doSwitchWithOverlay(spaceId);
+    // Acaba recarregant la pàgina: que el pop del modal aterri abans.
+    dismissModal(overlay, () => _doSwitchWithOverlay(spaceId));
   });
 }
 
@@ -895,8 +893,8 @@ function _showCreateSpaceModal() {
         '<button class="modal-confirm" id="space-create-confirm">' + escapeHtml(t('spacesCreateConfirm')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   const getIcon = _wireIconPicker(overlay);
   const nameInput = overlay.querySelector('#space-create-name');
   setTimeout(() => { nameInput && nameInput.focus(); }, 50);
@@ -946,15 +944,17 @@ function _showCreateSpaceModal() {
       const newSpace = window.SpacesSystem.createSpace(name, getIcon());
       window.SpacesSystem.updateSpaceSyncCode(newSpace.id, code);
 
-      close();
       renderSpacesList();
       renderSpaceSelectorBar();   // nou Espai → re-avalua mostrar/amagar la barra (#3)
+      // Cadena A→B: el modal del codi PREN l'entrada d'aquest (replaceModal).
+      // Si mentre esperàvem Firebase l'usuari ja l'havia tancat, replaceModal
+      // l'obre com un modal nou.
       // Modal de confirmació amb el codi destacat + botó per copiar-lo.
       // Important: en una creació nova, l'usuari NO ha de perdre aquest
       // codi (el necessitarà per connectar altres dispositius). Per
       // això el toast genèric no n'hi ha prou — mostrem el codi gran
       // dins un modal i li donem una manera fàcil de copiar-lo.
-      _showSpaceCreatedConfirmModal(name, code);
+      _showSpaceCreatedConfirmModal(name, code, { replacing: overlay });
     } catch (e) {
       console.error('[Spaces] Error creant espai:', e);
       showToast(t('spacesCreateError'));
@@ -969,7 +969,8 @@ function _showCreateSpaceModal() {
 // generar destacat + un botó per copiar-lo i un per tancar. L'usuari
 // necessita aquest codi per connectar altres dispositius i no se li
 // hauria d'amagar darrere d'un toast efímer.
-function _showSpaceCreatedConfirmModal(name, code) {
+// opts.replacing: overlay del modal de crear (cadena A→B → replaceModal).
+function _showSpaceCreatedConfirmModal(name, code, opts) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   overlay.innerHTML =
@@ -987,8 +988,9 @@ function _showSpaceCreatedConfirmModal(name, code) {
         '<button class="modal-confirm" id="space-created-copy">' + escapeHtml(t('spacesCreatedDoneCopyBtn')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  if (opts && opts.replacing) replaceModal(opts.replacing, overlay);
+  else openModal(overlay);
+  const close = () => dismissModal(overlay);
   overlay.querySelector('#space-created-close').addEventListener('click', close);
   overlay.querySelector('#space-created-copy').addEventListener('click', async () => {
     const ok = await copyTextToClipboard(code);
@@ -1037,8 +1039,8 @@ function _showJoinSpaceModal() {
         '<button class="modal-confirm" id="space-join-confirm">' + escapeHtml(t('spacesJoinConfirm')) + '</button>' +
       '</div>' +
     '</div>';
-  document.body.appendChild(overlay);
-  const close = () => { if (overlay.parentNode) document.body.removeChild(overlay); };
+  openModal(overlay);
+  const close = () => dismissModal(overlay);
   const getIcon = _wireIconPicker(overlay);
   const codeInput = overlay.querySelector('#space-join-code');
   const nameInput = overlay.querySelector('#space-join-name');

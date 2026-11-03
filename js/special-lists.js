@@ -375,7 +375,7 @@ function showSpecialSelectionStep() {
       </div>
     </div>
   `;
-  document.body.appendChild(overlay);
+  openModal(overlay);
 
   // Listeners checkboxes
   overlay.querySelectorAll('input[type="checkbox"]').forEach(cb => {
@@ -394,7 +394,7 @@ function showSpecialSelectionStep() {
   });
 
   overlay.querySelector('#modal-no-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
   });
 
   overlay.querySelector('#modal-yes-btn').addEventListener('click', () => {
@@ -403,12 +403,14 @@ function showSpecialSelectionStep() {
       showToast(t('noItemsSelected') || 'Cap producte seleccionat');
       return;
     }
-    document.body.removeChild(overlay);
-    // Pas 2: triar el supermercat
+    // Pas 2: triar el supermercat. Si n'hi ha diversos, el picker PREN
+    // l'entrada d'historial d'aquest modal (cadena A→B → replaceModal): el gest
+    // enrere des del picker torna a la pantalla, com el seu Cancel·la.
     if (supermarkets.length === 1) {
+      dismissModal(overlay);
       addSpecialListToSupermarket(supermarkets[0].id);
     } else {
-      showSupermarketPickerForSpecial();
+      showSupermarketPickerForSpecial({ replacing: overlay });
     }
   });
 }
@@ -441,7 +443,8 @@ function addSpecialListToSupermarket(supermarketId) {
   // Quedar-se a la pantalla del detall de la llista (no anar al super)
 }
 
-function showSupermarketPickerForSpecial() {
+// opts.replacing: overlay del pas 1 (showSpecialSelectionStep) → replaceModal.
+function showSupermarketPickerForSpecial(opts) {
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
   const enabled = getEnabledSupermarkets();
@@ -477,20 +480,21 @@ function showSupermarketPickerForSpecial() {
       <button class="modal-cancel" id="modal-no-btn" style="margin-top:10px">${t('cancel')}</button>
     </div>
   `;
-  document.body.appendChild(overlay);
+  if (opts && opts.replacing) replaceModal(opts.replacing, overlay);
+  else openModal(overlay);
 
   overlay.querySelectorAll('.modal-supermarket-option').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.dataset.id;
-      document.body.removeChild(overlay);
+      dismissModal(overlay);
       addSpecialListToSupermarket(id);
     });
   });
 
   overlay.querySelector('#modal-no-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
   });
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) document.body.removeChild(overlay);
+    if (e.target === overlay) dismissModal(overlay);
   });
 }

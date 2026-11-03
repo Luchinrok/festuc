@@ -882,6 +882,7 @@ function navCollapseToRoot(onRoot) {
 const _modalStack = [];       // { overlay, close }  (close = neteja real del modal)
 let _modalNoopPops = 0;       // popstates que cal ignorar (venen d'un dismiss d'usuari)
 let _modalPendingAfter = null; // callback a executar quan el pop del dismiss aterri
+let _modalPendingPush = false; // el callback SÍ ha d'empènyer (obre una capa nova)
 
 // Obertura: afegeix l'overlay i empeny 1 entrada d'historial (com una pantalla
 // més profunda). d = profunditat real + 1, igual que showScreen. No toca la URL.
@@ -911,7 +912,12 @@ function openModal(overlay, closeFn) {
 // Conseqüència volguda: el modal consumeix la seva capa, igual que el botó de
 // tancar — confirmar no deixa el flux ja confirmat darrere del gest enrere.
 // Si NO navega, no cal onSettled: crida'l i fes la teva feina tot seguit.
-function dismissModal(overlay, onSettled) {
+//
+// opts.push: el callback obre una capa NOVA per sobre de la pantalla de sota
+// (no la substitueix). Llavors s'executa sense _navFromPop i el seu showScreen
+// empeny entrada pròpia, ja amb la traversal acabada. Cas: modal d'editar
+// producte → pantalla del picker d'emojis (anada i tornada, vegeu biteme.js).
+function dismissModal(overlay, onSettled, opts) {
   const i = _modalStack.findIndex(function (m) { return m.overlay === overlay; });
   if (i === -1) {                                // ja tancat o no registrat (modal no
     if (typeof onSettled === 'function') onSettled();   // migrat): el callback s'ha
@@ -920,7 +926,10 @@ function dismissModal(overlay, onSettled) {
   const entry = _modalStack.splice(i, 1)[0];
   entry.close();                                 // neteja REAL
   _modalNoopPops++;
-  if (typeof onSettled === 'function') _modalPendingAfter = onSettled;
+  if (typeof onSettled === 'function') {
+    _modalPendingAfter = onSettled;
+    _modalPendingPush = !!(opts && opts.push);
+  }
   try {
     history.back();
   } catch (e) {
@@ -935,9 +944,13 @@ function dismissModal(overlay, onSettled) {
 // gest). Tanca A (neteja real, sense history.back) i obre B REEMPLAÇANT l'entrada
 // d'A → B queda al seu lloc, sense deixar residu d'historial darrere.
 // En ús a buyme: showAddToShoppingModal → showManualAddToBuyMeModal(.., {replacing}).
+// Si A ja no és a la pila (l'usuari l'ha tancat amb el gest mentre s'esperava
+// un await, p. ex. crear espai → modal del codi), la seva entrada ja no hi és:
+// B s'obre com un modal nou (empeny) en lloc de trepitjar l'entrada de la pantalla.
 function replaceModal(oldOverlay, newOverlay, newCloseFn) {
   const i = _modalStack.findIndex(function (m) { return m.overlay === oldOverlay; });
-  if (i !== -1) { _modalStack[i].close(); _modalStack.splice(i, 1); }
+  if (i === -1) { openModal(newOverlay, newCloseFn); return; }
+  _modalStack[i].close(); _modalStack.splice(i, 1);
   document.body.appendChild(newOverlay);
   _modalStack.push({ overlay: newOverlay, close: (typeof newCloseFn === 'function') ? newCloseFn : function () {
     if (newOverlay.parentNode) document.body.removeChild(newOverlay);

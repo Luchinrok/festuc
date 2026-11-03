@@ -312,13 +312,13 @@ function showCountryChangeModal(countryCode) {
       </div>
     </div>
   `;
-  document.body.appendChild(overlay);
+  openModal(overlay);
 
   overlay.querySelector('#modal-no-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
   });
   overlay.querySelector('#modal-yes-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
     changeCountry(countryCode);
     updateCountryStatus();
     renderCountryList();
@@ -328,7 +328,7 @@ function showCountryChangeModal(countryCode) {
     showToast('✓ ' + t(country.nameKey));
   });
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) document.body.removeChild(overlay);
+    if (e.target === overlay) dismissModal(overlay);
   });
 }
 
@@ -486,13 +486,13 @@ function askDeleteSupermarket(sm) {
       </div>
     </div>
   `;
-  document.body.appendChild(overlay);
+  openModal(overlay);
 
   overlay.querySelector('#modal-no-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
   });
   overlay.querySelector('#modal-yes-btn').addEventListener('click', () => {
-    document.body.removeChild(overlay);
+    dismissModal(overlay);
     shoppingItems = shoppingItems.filter(it => it.supermarketId !== sm.id);
     supermarkets = supermarkets.filter(s => s.id !== sm.id);
     saveShoppingData();
@@ -500,7 +500,7 @@ function askDeleteSupermarket(sm) {
     showToast(t('deleted'));
   });
   overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) document.body.removeChild(overlay);
+    if (e.target === overlay) dismissModal(overlay);
   });
 }
 

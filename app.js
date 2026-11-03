@@ -380,10 +380,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Prioritat: (−1) no-op d'un dismiss d'usuari; (0) aterratge de collapse;
   // (0.5) tancar el modal MIGRAT superior; (1) onboarding pas 2 → 1; (2) pantalla
   // no-launcher → data-back; (3) launcher = arrel → l'app es tanca.
-  // Sub-pas 2 EN CURS (fets: cookme, settings, buyme): només els migrats (registrats a
-  // _modalStack via openModal) intercepten el gest. Els NO migrats no toquen ni
-  // la pila ni l'historial → amb un modal no migrat obert, el gest navega la
-  // pantalla de sota, exactament com al sub-pas 1 (cap regressió).
+  // Sub-pas 2 FET: tots els modals de l'app són a _modalStack (via openModal) i
+  // el gest els tanca primer. Excepcions volgudes: els overlays de PROGRÉS
+  // (moure lot entre espais, "Canviant a…"), que el gest no ha de poder tancar.
   window.addEventListener('popstate', () => {
     // (−1) Pop no-op: un dismissModal (tancament d'usuari) ha fet history.back()
     // només per treure la seva entrada; aquest popstate no és un "enrere" real.
@@ -395,9 +394,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (_modalNoopPops > 0) {
       _modalNoopPops--;
       const after = _modalPendingAfter;
+      const push = _modalPendingPush;
       _modalPendingAfter = null;
+      _modalPendingPush = false;
       if (after) {
-        _navFromPop = true;
+        _navFromPop = !push;   // opts.push: el callback obre capa nova → que empenyi
         try { after(); } catch (e) { console.error(e); } finally { _navFromPop = false; }
       }
       return;
@@ -435,6 +436,12 @@ document.addEventListener('DOMContentLoaded', () => {
         _navFromPop = true;
         performBack(backBtn);
         _navFromPop = false;
+        // Tornada del picker d'emojis cap al modal d'editar producte (emoji
+        // triat, fletxa o gest: tots tres passen per aquí). Ja hem aterrat a
+        // l'entrada del producte → el modal pot empènyer la seva sense cursa.
+        if (backBtn.id === 'emoji-picker-back-btn' && typeof reopenProductEditAfterEmojiPicker === 'function') {
+          reopenProductEditAfterEmojiPicker();
+        }
       }
     }
     // (3) launcher (arrel): res → l'app es tanca (comportament normal).
