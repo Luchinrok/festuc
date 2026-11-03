@@ -1,5 +1,7 @@
 # Migració de Festuc a l'arrel de `luchinrok.github.io`
 
+> **✅ FETA el 03-11-2026 (passos 1-6, opció A).** L'app viu a https://luchinrok.github.io/ (repo `Luchinrok/luchinrok.github.io`, amb tota la història). `Luchinrok/Buyte` només serveix la redirecció de `/Buyte/`. `.nojekyll` a l'arrel perquè es publiqui `.well-known/`. **Queda el pas 7** (TWA + Play): cal el compte de desenvolupador de Google Play.
+
 > Objectiu: passar l'app de `https://luchinrok.github.io/Buyte/` (repo de projecte)
 > a `https://luchinrok.github.io/` (repo d'usuari/Pages), perquè un TWA la pugui
 > empaquetar per a Google Play amb un `assetlinks.json` a l'arrel de l'origen.
