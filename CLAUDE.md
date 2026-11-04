@@ -29,4 +29,4 @@ PWA sense framework (JS, HTML, CSS, sense build) per portar el menjar de casa: *
 
 ## Google Play (en curs)
 
-Objectiu: publicar Festuc com a TWA. Fet: migració a l'arrel i `.nojekyll` perquè es publiqui `.well-known/`. Queda: compte de desenvolupador de Google Play (25 $, l'ha d'obrir l'usuari; comptes personals nous: comprovar si cal prova tancada amb 12 persones durant 14 dies), generar el paquet (PWABuilder o Bubblewrap) i omplir `.well-known/assetlinks.json` amb el `package_name` i l'empremta SHA-256 reals. Bloquejant tou: primera càrrega (~300 KB gzip de scripts).
+Objectiu: publicar Festuc com a TWA. Fet: migració a l'arrel i `.nojekyll` perquè es publiqui `.well-known/`. Queda: compte de desenvolupador de Google Play (25 $, l'ha d'obrir l'usuari; comptes personals nous: comprovar si cal prova tancada amb 12 persones durant 14 dies), generar el paquet (PWABuilder o Bubblewrap) i omplir `.well-known/assetlinks.json` amb el `package_name` i l'empremta SHA-256 reals. Primera càrrega: primera tanda feta (~520 KB en total; detall i opcions següents a `memory/BACKLOG.md`).
