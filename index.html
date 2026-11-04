@@ -21,6 +21,50 @@
        scripts de l'app, perquè els mòduls (biteme.js, buyme.js)
        puguin fer `new Swiper(...)` quan s'invoqui openSection /
        openSupermarket. -->
+  <!-- Detector d'idioma + preload dels seus textos. Va ABANS dels fulls d'estil
+       perquè cap CSS l'endarrereixi: els blocs d'i18n s'escriuen amb document.write
+       al final del <body>, on el navegador no els veu fins que hi arriba el parser
+       (eren dels últims a acabar). Amb el preload es baixen dels primers. Les URLs
+       han de ser IDÈNTIQUES a les del document.write, o es baixarien dos cops. -->
+  <script>
+    // I18N_V: versió compartida de i18n-core.js i tots els blocs. L'ESTAMPA
+    // tools/split-i18n.ps1 en regenerar (NO la toquis a mà). Global perquè
+    // setLanguage/_preloadOtherLangBlocks la reusin per construir les URLs.
+    var I18N_V = '20261103-2';
+    (function () {
+      // ⚠️ MATEIXA LÒGICA EXACTA que _resolveLang() a i18n.source.js. Si divergeix,
+      //    es carregaria un bloc i getCurrentLang() en resoldria un altre. El
+      //    detector desa el resultat a window.__I18N_LANG i _resolveLang l'usa com
+      //    a font primària. Mantingueu-los sincronitzats: clau 'eatmefirst_lang',
+      //    validació contra ['ca','es','en','fr'], navigator.language(s), 'ca'.
+      var SUPPORTED = ['ca', 'es', 'en', 'fr'];
+      var KEY = 'eatmefirst_lang';
+      var L = 'ca';
+      try {
+        var saved = localStorage.getItem(KEY);
+        if (saved && SUPPORTED.indexOf(saved) !== -1) {
+          L = saved;
+        } else {
+          var cands = [];
+          if (navigator.languages && navigator.languages.length) cands = cands.concat(navigator.languages);
+          if (navigator.language) cands.push(navigator.language);
+          for (var i = 0; i < cands.length; i++) {
+            var base = String(cands[i] || '').split('-')[0].toLowerCase();
+            if (SUPPORTED.indexOf(base) !== -1) { L = base; break; }
+          }
+        }
+      } catch (e) {}
+      window.__I18N_LANG = L;
+      ['i18n-core.js', 'i18n/' + L + '.js'].forEach(function (f) {
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'script';
+        link.href = f + '?v=' + I18N_V;
+        document.head.appendChild(link);
+      });
+    })();
+  </script>
+
   <!-- Swiper CSS AUTO-ALLOTJAT i carregat de manera NO bloquejant. Cap carrusel
        es pinta a l'arrencada: benvinguda i launcher no en tenen; els sliders
        (zones/levels/shops/cookme) són pantalles secundàries que s'inicialitzen
@@ -2260,60 +2304,25 @@
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- Recursos de tercers NO necessaris a l'arrencada, carregats amb `defer`:
-       l'escàner (html5-qrcode) només s'obre en prémer el botó i Swiper només en
-       obrir una secció amb carrusel — totes dues coses DESPRÉS d'una interacció
-       de l'usuari. Cap referència a Swiper/Html5Qrcode és de nivell superior
-       (totes dins de funcions `_ensure*Swiper` / l'escàner), i l'escàner a més
-       té guarda `typeof Html5Qrcode === 'undefined'`. Amb `defer` es baixen en
-       paral·lel PERÒ surten de la cadena serial d'scripts clàssics, així que
-       deixen d'endarrerir i18n-core.js/core.js/app.js (i de posar 2 connexions
-       cross-origin —unpkg + jsDelivr— al davant del parser). S'executen després
-       del parse i abans de DOMContentLoaded, per tant ja hi són quan corre
-       l'init d'app.js (que va a DOMContentLoaded) i quan l'usuari hi interactua. -->
-  <script defer src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <!-- Llibreries auto-allotjades a vendor/ (sense CDN: cap connexió externa i
+       versió fixada, la mateixa que el CSS de Swiper).
+       · Swiper: amb `defer`. Només s'usa en obrir una secció amb carrusel, dins
+         de funcions `_ensure*Swiper`; defer el treu de la cadena d'scripts.
+       · html5-qrcode (108 KB gzip): NO es carrega aquí. El baixa startScanner
+         (js/biteme.js) el primer cop que s'obre l'escàner. -->
+  <script defer src="vendor/swiper-bundle.min.js?v=20261104-1"></script>
   <script src="firebase-sync.js?v=20260619-1"></script>
   <script src="notifications.js?v=20260707-1"></script>
   <!-- i18n partit per idioma. Font única: i18n.source.js (no servida); regenera
        amb tools/split-i18n.ps1, que TAMBÉ estampa I18N_V aquí sota. i18n-core.js
        porta el runtime (TRANSLATIONS={} + t/setLanguage/translatePage…); cada
        i18n/{lang}.js pobla TRANSLATIONS.{lang}. Es carrega NOMÉS el bloc de
-       l'idioma actiu (detector); setLanguage carrega la resta sota demanda. -->
+       l'idioma actiu (detector, al <head>); setLanguage carrega la resta sota demanda. -->
   <script>
-    // I18N_V: versió compartida de i18n-core.js i tots els blocs. L'ESTAMPA
-    // tools/split-i18n.ps1 en regenerar (NO la toquis a mà). Global perquè
-    // setLanguage/_preloadOtherLangBlocks la reusin per construir les URLs.
-    var I18N_V = '20261103-2';
-    (function () {
-      // ⚠️ MATEIXA LÒGICA EXACTA que _resolveLang() a i18n.source.js. Si divergeix,
-      //    es carregaria un bloc i getCurrentLang() en resoldria un altre. El
-      //    detector desa el resultat a window.__I18N_LANG i _resolveLang l'usa com
-      //    a font primària. Mantingueu-los sincronitzats: clau 'eatmefirst_lang',
-      //    validació contra ['ca','es','en','fr'], navigator.language(s), 'ca'.
-      var SUPPORTED = ['ca', 'es', 'en', 'fr'];
-      var KEY = 'eatmefirst_lang';
-      var L = 'ca';
-      try {
-        var saved = localStorage.getItem(KEY);
-        if (saved && SUPPORTED.indexOf(saved) !== -1) {
-          L = saved;
-        } else {
-          var cands = [];
-          if (navigator.languages && navigator.languages.length) cands = cands.concat(navigator.languages);
-          if (navigator.language) cands.push(navigator.language);
-          for (var i = 0; i < cands.length; i++) {
-            var base = String(cands[i] || '').split('-')[0].toLowerCase();
-            if (SUPPORTED.indexOf(base) !== -1) { L = base; break; }
-          }
-        }
-      } catch (e) {}
-      window.__I18N_LANG = L;
-      // Síncron, durant el parse, ABANS de core.js: primer el runtime, després
-      // NOMÉS el bloc de l'idioma actiu.
-      document.write('<script src="i18n-core.js?v=' + I18N_V + '"><\/script>');
-      document.write('<script src="i18n/' + L + '.js?v=' + I18N_V + '"><\/script>');
-    })();
+    // Síncron, durant el parse, ABANS de core.js: primer el runtime, després
+    // NOMÉS el bloc de l'idioma actiu (ja preloadats des del <head>).
+    document.write('<script src="i18n-core.js?v=' + I18N_V + '"><\/script>');
+    document.write('<script src="i18n/' + window.__I18N_LANG + '.js?v=' + I18N_V + '"><\/script>');
   </script>
   <script>
     // Xarxa de seguretat: aquest script corre DESPRÉS dels blocs escrits amunt
@@ -2329,9 +2338,21 @@
       } catch (e) {}
     })();
   </script>
-  <script src="js/core.js?v=20261103-2"></script>
+  <script>
+    // Textos de la primera pantalla tan bon punt arriben, sense esperar la resta
+    // de scripts: si no, les targetes del launcher estan buides fins al final.
+    // translatePage (settings.js) ho tornarà a aplicar tot a DOMContentLoaded.
+    (function () {
+      try {
+        document.querySelectorAll('#screen-launcher [data-i18n], #screen-welcome [data-i18n]').forEach(function (el) {
+          el.textContent = t(el.getAttribute('data-i18n'));
+        });
+      } catch (e) {}
+    })();
+  </script>
+  <script src="js/core.js?v=20261104-1"></script>
   <script src="js/product-data.js?v=20260503-3"></script>
-  <script src="js/biteme.js?v=20261103-2"></script>
+  <script src="js/biteme.js?v=20261104-1"></script>
   <script src="js/shops.js?v=20261103-2"></script>
   <script src="js/buyme.js?v=20261103-1"></script>
   <script src="js/populars.js?v=20261103-1"></script>

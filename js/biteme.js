@@ -5508,17 +5508,31 @@ function openEmojiPicker(target, origin) {
 let html5QrScanner = null;
 let lastScannedCode = null;
 let lastScanTime = 0;
+let _scannerStartId = 0;   // només l'últim startScanner en curs pot engegar la càmera
 
 async function startScanner() {
   const status = document.getElementById('scanner-status');
   status.textContent = '';
+  const startId = ++_scannerStartId;
 
   if (!('mediaDevices' in navigator) || !navigator.mediaDevices.getUserMedia) {
     status.textContent = t('cameraError');
     return;
   }
 
-  if (typeof Html5Qrcode === 'undefined') {
+  // La llibreria es baixa el primer cop que s'obre l'escàner (vegeu index.html).
+  // Mentre arriba, l'usuari pot haver sortit de la pantalla o haver-la reobert:
+  // llavors no s'ha d'engegar la càmera, o quedaria encesa d'amagat o per duplicat.
+  let libOk = true;
+  try {
+    await loadScriptOnce('vendor/html5-qrcode.min.js?v=20261104-1');
+  } catch (e) {
+    libOk = false;
+  }
+  const scanScreen = document.getElementById('screen-scan');
+  if (startId !== _scannerStartId || !scanScreen || !scanScreen.classList.contains('active')) return;
+
+  if (!libOk || typeof Html5Qrcode === 'undefined') {
     status.textContent = t('cameraError');
     return;
   }

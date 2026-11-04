@@ -871,6 +871,25 @@ function navCollapseToRoot(onRoot) {
   }
 }
 
+// Carrega un script clàssic sota demanda, una sola vegada. Si falla (sense
+// xarxa), oblida'l perquè el proper intent el torni a demanar.
+const _scriptLoads = {};
+function loadScriptOnce(src) {
+  if (_scriptLoads[src]) return _scriptLoads[src];
+  _scriptLoads[src] = new Promise(function (resolve, reject) {
+    const el = document.createElement('script');
+    el.src = src;
+    el.onload = function () { resolve(); };
+    el.onerror = function () {
+      delete _scriptLoads[src];
+      el.remove();
+      reject(new Error('No s\'ha pogut carregar ' + src));
+    };
+    document.head.appendChild(el);
+  });
+  return _scriptLoads[src];
+}
+
 // ---- Pila de modals (gest enrere, sub-pas 2) ----
 // Tots els modals de l'app són un <div class="modal-overlay"> afegit a <body>.
 // Perquè el gest enrere tanqui PRIMER el modal superior (en lloc de navegar la
