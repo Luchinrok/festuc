@@ -4,8 +4,9 @@ PWA sense framework (JS, HTML, CSS, sense build) per portar el menjar de casa: *
 
 ## On viu i com es publica
 
-- **Adreça:** https://luchinrok.github.io/ (des del 03-11-2026). Repo `Luchinrok/luchinrok.github.io` = remot `origin`. GitHub Pages publica sol des de `main`.
-- El repo antic `Luchinrok/Buyte` (remot `buyte-antic`) només serveix la redirecció de `/Buyte/` a l'arrel. No s'hi treballa.
+- **Adreça:** https://luchinrok.github.io/festuc/ (des del 15-11-2026). Repo `Luchinrok/festuc` = remot `origin`. GitHub Pages publica sol des de `main`.
+- L'arrel `luchinrok.github.io` (repo `Luchinrok/luchinrok.github.io`, remot `arrel`) és compartida per Festuc, Xala (`/Xala/`) i 3Tocs (`/volei/`): hi viu l'`.well-known/assetlinks.json` de les tres apps i una redirecció de `/` a `/festuc/` per a qui tenia Festuc instal·lat a l'arrel. Aquí no s'hi treballa; vegeu `docs/MIGRACIO-ARREL.md`.
+- El repo antic `Luchinrok/Buyte` (remot `buyte-antic`) només serveix la redirecció de `/Buyte/` a `/festuc/`. No s'hi treballa.
 - **Fer push a `main` és publicar.** Treballar en una branca, ensenyar el resultat i **pujar només quan l'usuari ho digui**.
 - Git no té identitat configurada en aquest PC: fer els commits amb `git -c user.name="$(git log -1 --format=%an)" -c user.email="$(git log -1 --format=%ae)" commit ...`.
 - Les dades de cada usuari són a `localStorage` (claus `eatmefirst_*`), lligades al domini `luchinrok.github.io`: **no canviar mai de domini** sense resoldre abans la migració de dades (vegeu `docs/MIGRACIO-ARREL.md`). Firebase (projecte `eatmefirst`) només serveix per a la sincronització per codi de família.
@@ -29,4 +30,4 @@ PWA sense framework (JS, HTML, CSS, sense build) per portar el menjar de casa: *
 
 ## Google Play (en curs)
 
-Objectiu: publicar Festuc com a TWA. Fet: migració a l'arrel i `.nojekyll` perquè es publiqui `.well-known/`. Queda: compte de desenvolupador de Google Play (25 $, l'ha d'obrir l'usuari; comptes personals nous: comprovar si cal prova tancada amb 12 persones durant 14 dies), generar el paquet (PWABuilder o Bubblewrap) i omplir `.well-known/assetlinks.json` amb el `package_name` i l'empremta SHA-256 reals. Primera càrrega: primera tanda feta (~520 KB en total; detall i opcions següents a `memory/BACKLOG.md`).
+Objectiu: publicar Festuc com a TWA. Fet: Festuc a `/festuc/` i `assetlinks.json` a l'arrel compartida (repo `luchinrok.github.io`). Queda: compte de desenvolupador de Google Play (25 $, l'ha d'obrir l'usuari; comptes personals nous: comprovar si cal prova tancada amb 12 persones durant 14 dies), generar el paquet (PWABuilder o Bubblewrap) i omplir `.well-known/assetlinks.json` **del repo de l'arrel** amb el `package_name` i l'empremta SHA-256 reals. Primera càrrega: primera tanda feta (~520 KB en total; detall i opcions següents a `memory/BACKLOG.md`).

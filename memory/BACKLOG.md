@@ -34,6 +34,8 @@ _(Històric del fil de traducció, ja tancat:)_ **Pas 4 — contingut de dades**
 
 ## 🚀 Llançament al mercat (Google Play)
 
+- **15/11/26 — Festuc a `/festuc/`**: repo nou `Luchinrok/festuc` (Pages actiu), adreça https://luchinrok.github.io/festuc/. L'arrel queda compartida per Festuc, Xala i 3Tocs: només `assetlinks.json` i redireccions. Dades conservades (mateix origen). Qui tenia Festuc instal·lat a l'arrel hi arriba per la redirecció; per tenir la icona nova cal tornar-la a instal·lar des de `/festuc/`.
+
 - **15/11/26 — Fitxa i privacitat preparades** (branca `google-play-fitxa`): `privacitat.html` (ca + en; dades locals, sincronització Firebase opcional, codis de barres a Open Food Facts/UPCitemdb, esborrat per codi de família) → https://luchinrok.github.io/privacitat.html un cop publicat. `botiga/fitxa.md`: nom, descripcions (ca/es/en), categoria i respostes de Seguretat de les dades, classificació i públic. `botiga/captura-1..8.png` (1080×1920) i `botiga/destacada.png` (1024×500). Compte de desenvolupador obert, en validació. Pendent: (a) l'app no té manera d'esborrar les dades de Firebase d'un codi; ara es fa a mà per petició. (b) ✅ enllaç a la política a Configuració, sota la versió (branca `enllac-privacitat`).
 
 Objectiu: publicar **Festuc** com a PWA empaquetada a Google Play, multi-idioma (CA/ES/EN/FR).

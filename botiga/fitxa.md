@@ -44,8 +44,8 @@ Aplicacions → **Menjar i begudes** (alternativa: Compres).
 ## Dades de contacte
 
 - Correu: el del compte de desenvolupador (el que vulguis fer públic). Google l'exigeix.
-- Lloc web: https://luchinrok.github.io/
-- Política de privacitat: https://luchinrok.github.io/privacitat.html
+- Lloc web: https://luchinrok.github.io/festuc/
+- Política de privacitat: https://luchinrok.github.io/festuc/privacitat.html
 
 ## Recursos gràfics (carpeta `botiga/`)
 

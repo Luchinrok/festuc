@@ -1,5 +1,7 @@
 # Migració de Festuc a l'arrel de `luchinrok.github.io`
 
+> **🔁 15-11-2026: Festuc ha passat de l'arrel a `/festuc/`** (repo `Luchinrok/festuc`, amb tota la història). Motiu: a l'arrel el `scope` de Festuc cobria tot `luchinrok.github.io`, també `/Xala/` i `/volei/` (3Tocs), i el TWA de Festuc hauria capturat els enllaços de les altres apps. Les dades es conserven (mateix origen). L'arrel (`Luchinrok/luchinrok.github.io`) ara només té `.well-known/assetlinks.json` (per a les 3 apps), `.nojekyll` i redireccions de `/` i `/privacitat.html` a `/festuc/`. El que segueix és la història de la primera migració.
+
 > **✅ FETA el 03-11-2026 (passos 1-6, opció A).** L'app viu a https://luchinrok.github.io/ (repo `Luchinrok/luchinrok.github.io`, amb tota la història). `Luchinrok/Buyte` només serveix la redirecció de `/Buyte/`. `.nojekyll` a l'arrel perquè es publiqui `.well-known/`. **Queda el pas 7** (TWA + Play): cal el compte de desenvolupador de Google Play.
 
 > Objectiu: passar l'app de `https://luchinrok.github.io/Buyte/` (repo de projecte)
