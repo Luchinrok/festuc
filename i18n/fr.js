@@ -994,6 +994,7 @@ TRANSLATIONS.fr = {
     categoryAppSub: 'Apparence, notifications, synchronisation',
     categoryData: 'Données',
     categoryDataSub: 'Supprimer, exporter, importer',
+    privacyPolicyLink: 'Politique de confidentialité',
     subTabBotigues: 'Magasins',
     subTabZones: 'Zones',
     subTabPopulars: 'Produits',

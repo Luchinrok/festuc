@@ -30,7 +30,7 @@
     // I18N_V: versió compartida de i18n-core.js i tots els blocs. L'ESTAMPA
     // tools/split-i18n.ps1 en regenerar (NO la toquis a mà). Global perquè
     // setLanguage/_preloadOtherLangBlocks la reusin per construir les URLs.
-    var I18N_V = '20261103-2';
+    var I18N_V = '20261115-1';
     (function () {
       // ⚠️ MATEIXA LÒGICA EXACTA que _resolveLang() a i18n.source.js. Si divergeix,
       //    es carregaria un bloc i getCurrentLang() en resoldria un altre. El
@@ -73,7 +73,7 @@
        (fora el DNS+TLS de jsDelivr del camí crític). <noscript> com a fallback. -->
   <link rel="stylesheet" href="vendor/swiper-bundle.min.css?v=20260807-1" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="vendor/swiper-bundle.min.css?v=20260807-1"></noscript>
-  <link rel="stylesheet" href="styles.css?v=20261103-3">
+  <link rel="stylesheet" href="styles.css?v=20261115-1">
 
   <!-- Guarda anti-flaix d'onboarding — DECISIÓ AL <head>, abans que es pinti res.
        #screen-launcher porta class="screen active" estàtic; si l'usuari no ha
@@ -1370,6 +1370,7 @@
     </div>
 
     <p class="app-version">Festuc · v2.0</p>
+    <p class="app-legal"><a href="privacitat.html" target="_blank" rel="noopener" data-i18n="privacyPolicyLink">Política de privacitat</a></p>
   </div>
 
   <!-- PANTALLA ESBORRAR DADES -->

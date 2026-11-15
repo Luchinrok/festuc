@@ -994,6 +994,7 @@ TRANSLATIONS.en = {
     categoryAppSub: 'Appearance, notifications, sync',
     categoryData: 'Data',
     categoryDataSub: 'Delete, export, import',
+    privacyPolicyLink: 'Privacy policy',
     subTabBotigues: 'Stores',
     subTabZones: 'Zones',
     subTabPopulars: 'Products',

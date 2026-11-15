@@ -1221,6 +1221,7 @@ TRANSLATIONS.ca = {
     categoryAppSub:      'Aparença, notificacions, sincronització',
     categoryData:        'Dades',
     categoryDataSub:     'Esborrar, exportar, importar',
+    privacyPolicyLink: 'Política de privacitat',
     settingsSpacesTitle: 'Els meus espais',
     settingsSpacesSub:   'Crear, unir-te i canviar d\'espai',
     subTabBotigues:    'Botigues',

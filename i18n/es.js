@@ -994,6 +994,7 @@ TRANSLATIONS.es = {
     categoryAppSub: 'Apariencia, notificaciones, sincronización',
     categoryData: 'Datos',
     categoryDataSub: 'Borrar, exportar, importar',
+    privacyPolicyLink: 'Política de privacidad',
     subTabBotigues: 'Tiendas',
     subTabZones: 'Zonas',
     subTabPopulars: 'Productos',
