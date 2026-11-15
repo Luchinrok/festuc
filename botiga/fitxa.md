@@ -75,7 +75,7 @@ Ordre de les captures: 1 inici · 2 Menja'm · 3 nevera per urgència · 4 llist
 
 **Classificació del contingut** (qüestionari IARC): categoria *Utilitats, productivitat, comunicació o altres*. Sense violència, sexe, llenguatge groller, drogues ni apostes. Els usuaris **no** es poden comunicar amb desconeguts: només comparteixen llistes amb qui té el codi. No comparteix la ubicació. No es poden comprar productes digitals.
 
-**Públic objectiu**: **18 anys o més** (és una app per portar la casa; així no s'aplica la política de famílies). Si prefereixes **13 o més**, també val: no està pensada per a infants.
+**Públic objectiu**: **18 anys o més** (decidit el 15/11/26; així no s'aplica la política de famílies).
 
 **Anuncis**: **No** en conté.
 
