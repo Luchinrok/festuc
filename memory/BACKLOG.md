@@ -34,6 +34,8 @@ _(Històric del fil de traducció, ja tancat:)_ **Pas 4 — contingut de dades**
 
 ## 🚀 Llançament al mercat (Google Play)
 
+- **15/11/26 — Fitxa i privacitat preparades** (branca `google-play-fitxa`): `privacitat.html` (ca + en; dades locals, sincronització Firebase opcional, codis de barres a Open Food Facts/UPCitemdb, esborrat per codi de família) → https://luchinrok.github.io/privacitat.html un cop publicat. `botiga/fitxa.md`: nom, descripcions (ca/es/en), categoria i respostes de Seguretat de les dades, classificació i públic. `botiga/captura-1..8.png` (1080×1920) i `botiga/destacada.png` (1024×500). Compte de desenvolupador obert, en validació. Pendent: (a) l'app no té manera d'esborrar les dades de Firebase d'un codi; ara es fa a mà per petició. (b) enllaç a la política des de Configuració (opcional).
+
 Objectiu: publicar **Festuc** com a PWA empaquetada a Google Play, multi-idioma (CA/ES/EN/FR).
 
 - **Pas 1 — Rebranding a Festuc** ✅ **FET (07/07)**. `appName` → `'Festuc'`; mòduls `shoppingListTitle`/`trackerTitle`/`cookmeTitle` → **Compra'm**/**Menja'm**/**Cuina'm**; **totes les frases que incrustaven BuyMe/EatMe/CookMe migrades** (toasts, plurals, insígnies, notificacions, modal d'ajuda del llindar); `<title>`/launcher/welcome/versió → Festuc. **Interns intactes** (noms de fitxers, IDs `#screen-*`, claus `eatmefirst_*`, funcions/variables, comentaris, `console.log('[Buyte]…')`). No existeix `manifest.json` ni meta tags PWA. (Fitxers: `i18n.js`, `index.html`, `notifications.js`, `smart-notifications.js`, `buyme.js`, `patterns.js`, `cookme.js`, `badges-data.js`, `app.js`.)
