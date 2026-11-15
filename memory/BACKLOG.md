@@ -22,6 +22,15 @@ Aquest fitxer és la **font de veritat del backlog viu** del projecte. Conté í
 
 Llista neta del que queda OBERT. El detall històric i els ítems resolts són més avall.
 
+**👉 PROPER DIA (a 15/11/26) — Google Play.** Estat: compte de desenvolupador obert, **Google l'està validant**. La web ja està llesta i publicada (Festuc a https://luchinrok.github.io/festuc/, política, fitxa, captures). Quan l'usuari digui «Google ja m'ha validat», acompanyar-lo **pas a pas i sense llistes llargues** (li costa seguir molts avisos alhora; una cosa cada vegada):
+1. **Crear l'app a Play Console** i omplir la fitxa copiant de `botiga/fitxa.md`: nom, descripcions (ca, i traduccions es/en), categoria Menjar i begudes, **lloc web** https://luchinrok.github.io/festuc/, **política** https://luchinrok.github.io/festuc/privacitat.html, **correu de contacte** (encara no triat: preguntar-lo), icona `icons/icon-512.png`, `botiga/destacada.png`, `botiga/captura-1..8.png`.
+2. **Qüestionaris** (Seguretat de les dades, classificació, anuncis, accés): respostes a `botiga/fitxa.md`. Públic: **18 anys o més** (decidit).
+3. **Generar el paquet TWA** (PWABuilder o Bubblewrap) amb `start_url`/`scope` a `/festuc/`. Triar `package_name`.
+4. **Omplir l'`assetlinks.json` de l'arrel** (repo `Luchinrok/luchinrok.github.io`, entrada «Festuc»; NO al repo `festuc`) amb el `package_name` i l'empremta SHA-256 de Play App Signing. Les entrades de Xala i 3Tocs són dels seus agents.
+5. Comprovar si el compte personal nou necessita **prova tancada (12 persones, 14 dies)** abans de producció.
+- Recordatori a l'usuari (no urgent): reinstal·lar Festuc al mòbil des de `/festuc/` i treure la icona vella de l'arrel.
+- Pendent menor: l'app no té botó per esborrar les dades de Firebase d'un codi (ara es fa a mà per petició, com diu la política).
+
 **PER PROVAR (03/11/26) — branca `millores-disseny` (sense fusionar a `main`)**: accessibilitat i retocs visuals. Abans de fusionar, provar a l'**iPhone real**: (1) scroll de la llista dins el cub de Compra'm a les cares 2-4 i el toggle Cronològic/Per categoria (no s'ha tocat cap regla de layout del `#screen-supermarket`, però és la zona fràgil, vegeu NOTES.md); (2) amb «Reduir moviment» activat a iOS, el cub de Swiper ha de girar igual (està exclòs de la regla); (3) mode fosc: selector de data i caselles ara surten foscos (`color-scheme`). No s'ha tocat el `maximum-scale=1` del viewport (treure'l faria zoom en enfocar inputs de 15px a iOS).
 
 **03/11/26 — Migració a l'arrel FETA**: Festuc és a https://luchinrok.github.io/ (repo `Luchinrok/luchinrok.github.io`; `Buyte` ara només redirigeix `/Buyte/`). Logo i mascota nous (festuc mig obert). Dels 3 bloquejants de Google Play queda: `assetlinks.json` real i el TWA (cal compte de desenvolupador, 25 $; comptes personals nous: prova tancada amb 12 persones durant 14 dies, comprovar-ho). Bloquejant tou: primera càrrega (~300 KB gzip).
@@ -36,7 +45,7 @@ _(Històric del fil de traducció, ja tancat:)_ **Pas 4 — contingut de dades**
 
 - **15/11/26 — Festuc a `/festuc/`**: repo nou `Luchinrok/festuc` (Pages actiu), adreça https://luchinrok.github.io/festuc/. L'arrel queda compartida per Festuc, Xala i 3Tocs: només `assetlinks.json` i redireccions. Dades conservades (mateix origen). Qui tenia Festuc instal·lat a l'arrel hi arriba per la redirecció; per tenir la icona nova cal tornar-la a instal·lar des de `/festuc/`.
 
-- **15/11/26 — Fitxa i privacitat preparades** (branca `google-play-fitxa`): `privacitat.html` (ca + en; dades locals, sincronització Firebase opcional, codis de barres a Open Food Facts/UPCitemdb, esborrat per codi de família) → https://luchinrok.github.io/privacitat.html un cop publicat. `botiga/fitxa.md`: nom, descripcions (ca/es/en), categoria i respostes de Seguretat de les dades, classificació i públic. `botiga/captura-1..8.png` (1080×1920) i `botiga/destacada.png` (1024×500). Compte de desenvolupador obert, en validació. Pendent: (a) l'app no té manera d'esborrar les dades de Firebase d'un codi; ara es fa a mà per petició. (b) ✅ enllaç a la política a Configuració, sota la versió (branca `enllac-privacitat`).
+- **15/11/26 — Fitxa i privacitat preparades** (branca `google-play-fitxa`): `privacitat.html` (ca + en; dades locals, sincronització Firebase opcional, codis de barres a Open Food Facts/UPCitemdb, esborrat per codi de família) → ara a https://luchinrok.github.io/festuc/privacitat.html (publicat). `botiga/fitxa.md`: nom, descripcions (ca/es/en), categoria i respostes de Seguretat de les dades, classificació i públic. `botiga/captura-1..8.png` (1080×1920) i `botiga/destacada.png` (1024×500). Compte de desenvolupador obert, en validació. Pendent: (a) l'app no té manera d'esborrar les dades de Firebase d'un codi; ara es fa a mà per petició. (b) ✅ enllaç a la política a Configuració, sota la versió (branca `enllac-privacitat`).
 
 Objectiu: publicar **Festuc** com a PWA empaquetada a Google Play, multi-idioma (CA/ES/EN/FR).
 
