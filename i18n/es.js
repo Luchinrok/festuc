@@ -483,7 +483,7 @@ TRANSLATIONS.es = {
     dataManagementSub: 'Borrar, exportar, importar',
     editPopulars: 'Editar productos populares',
     launcherHint: 'Elige una opción para empezar',
-    launcherSubtitle: "Buy it. Cook it. Eat it. Don't waste it.",
+    launcherSubtitle: 'Cómpralo. Cocínalo. Cómetelo. No lo tires.',
     localeCountrySection: 'País',
     localeIdiomaSection: 'Idioma',
     localeTitle: 'Idioma y país',

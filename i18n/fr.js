@@ -483,7 +483,7 @@ TRANSLATIONS.fr = {
     dataManagementSub: 'Supprimer, exporter, importer',
     editPopulars: 'Modifier les produits courants',
     launcherHint: 'Choisis une option pour commencer',
-    launcherSubtitle: "Buy it. Cook it. Eat it. Don't waste it.",
+    launcherSubtitle: 'Achète-le. Cuisine-le. Mange-le. Ne le gaspille pas.',
     localeCountrySection: 'Pays',
     localeIdiomaSection: 'Langue',
     localeTitle: 'Langue et pays',

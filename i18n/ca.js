@@ -807,7 +807,7 @@ TRANSLATIONS.ca = {
     notifDeactivated: 'Notificacions desactivades',
     notifSingle: (n) => 'Tens 1 producte a punt de caducar: ' + n,
     notifMultiple: (n) => 'Tens ' + n + ' productes a punt de caducar:',
-    launcherSubtitle: 'Buy it. Cook it. Eat it. Don\'t waste it.',
+    launcherSubtitle: "Compra'l. Cuina'l. Menja-te'l. No el llencis.",
     mySpacesTitle: 'Els meus espais',
     mySpacesHint: 'Cada espai té les seves pròpies dades (productes, llistes, supermercats...). Toca un espai per canviar-hi.',
     spacesCreateNew: '+ Crear nou espai',
