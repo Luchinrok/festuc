@@ -5,7 +5,7 @@ Idioma per defecte de la fitxa: **català (ca)**. Al final hi ha la versió en c
 
 ## Nom de l'aplicació (màx. 30)
 
-Festuc: compra, cuina i nevera
+Festuc: compra i no malgastis
 
 ## Descripció breu (màx. 80)
 
@@ -87,7 +87,7 @@ Ordre de les captures: 1 inici · 2 Menja'm · 3 nevera per urgència · 4 llist
 
 ## Castellano (traducción de la ficha)
 
-**Nombre:** Festuc: compra, menú y nevera
+**Nom:** Festuc: compra y no tires nada
 
 **Descripción breve:** Compra, menú y nevera. Cómete lo que tienes antes de que caduque.
 
@@ -119,7 +119,7 @@ En catalán, castellano, inglés y francés. Con modo oscuro.
 
 ## English (listing translation)
 
-**Name:** Festuc: groceries & fridge
+**Name:** Festuc: shop and waste less
 
 **Short description:** Shopping list, meal plan and fridge. Eat what you have before it expires.
 
